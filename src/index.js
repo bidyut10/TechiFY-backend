@@ -18,7 +18,7 @@ const bcrypt= require('bcrypt')
 
 mongoose
   .connect(
-    "mongodb+srv://bidyut10:kabir34268@cluster0.rw6eu.mongodb.net/CURD-AuthorBlog?retryWrites=true&w=majority",
+    process.env.MONGO_URI,
     { useNewUrlParser: true }
   )
   .then(() => console.log("MongoDb is connected"))
