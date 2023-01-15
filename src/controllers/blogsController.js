@@ -1,11 +1,13 @@
 const blogsModel = require("../models/blogsModel");
 const authorModel = require("../models/authorModel");
+const url = require('url');
 
 const createBlogs = async function (req, res) {
   try {
     //edge Cases for createblogs according to Blog model and as per our requirements
     //if body is empty
     let data = req.body;
+    const {authorId, title, location , imgUrl, description}= data
     if (Object.keys(data).length == 0) {
       return res.status(400).send({
         status: false,
@@ -14,24 +16,34 @@ const createBlogs = async function (req, res) {
     }
 
     //checking required feilds
-    if (!(data.authorId) && !(data.title) && !(data.subtitle) && !(data.summary) && !(data.description)) {
+    if (!(authorId) && !(title) && !(location) && !(imgUrl) && !(description)) {
       return res
         .status(400)
         .send({ status: false, msg: "Missing feild" });
     }
     
     //empty space
-    if (data.title.trim().length === 0 && data.subtitle.trim().length === 0 && data.summary.trim().length === 0 && data.description.trim().length === 0) {
+    if (title.trim().length === 0 && location.trim().length === 0 && imgUrl.trim().length === 0 && description.trim().length === 0) {
       res.status(400).send("Missing Field")
     }
 
+    //imgUrl
+    if(data.imgUrl){
+      const reg = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+      if (!reg.test(imgUrl)) {
+        return res.status(400).send({ status: false, msg: "imgUrl is not in correct format" })
+      };
+    }
+    
+
     //authorid is exist or not
-    let checkauthorId = await authorModel.findById({ _id: data.authorId });
+    let checkauthorId = await authorModel.findById({ _id: authorId });
     if (!checkauthorId) {
       return res
         .status(400)
         .send({ status: false, msg: "AthorId does'nt exist" });
     }
+    
 
     //After the passing all the edge cases now author can created his own new blogs
 
@@ -174,7 +186,7 @@ const updateBlogs = async function (req, res) {
         .send({ status: false, message: "BlogId format isn't correct" });
     }
 
-    const { title, subtitle, description, summary } = req.body;
+    const { title, location, description, imgUrl } = req.body;
 
     //checking required feilds,, empty space
     if (req.body.title){
@@ -192,19 +204,18 @@ const updateBlogs = async function (req, res) {
           .send({ status: false, msg: "Missing feild" });
       }
     }
-    if (req.body.subtitle) {
-      if (subtitle.trim().length === 0) {
+    if (req.body.location) {
+      if (location.trim().length === 0) {
         return res
           .status(400)
           .send({ status: false, msg: "Missing feild" });
       }
     }
-    if (req.body.summary) {
-      if (summary.trim().length === 0) {
-        return res
-          .status(400)
-          .send({ status: false, msg: "Missing feild" });
-      }
+    if (req.body.imgUrl) {
+      const reg = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+      if (!reg.test(imgUrl)) {
+        return res.status(400).send({ status: false, msg: "imgUrl is not in correct format" })
+      };
     }
     
     let updateBlog = await blogsModel.findByIdAndUpdate(
@@ -212,9 +223,9 @@ const updateBlogs = async function (req, res) {
       {
         $set: {
           title: title,
-          subtitle: subtitle,
+          location: location,
           description: description,
-          summary: summary,
+          imgUrl: imgUrl,
         },
       },
       { new: true }
