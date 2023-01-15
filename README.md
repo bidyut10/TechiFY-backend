@@ -11,7 +11,7 @@
 ```
 - Blogs Model
 ```
-{ title: {mandatory}, subtitle: {mandatory}, authorId: {mandatory, refs to author model}, summary: {string, mandatory}, description: {string}, deletedAt: {boolean, default: false} }
+{ title: {mandatory}, location: {mandatory}, authorId: {mandatory, refs to author model}, imgUrl: {string, mandatory}, description: {string}, deletedAt: {boolean, default: false} }
 ```
 
 ### Author APIs /authors
@@ -55,9 +55,9 @@
 ```yaml
 {
   "title": "title",
-  "subtitle": "subtitle",
+  "location": "location",
   "description": "description",
-  "summary": "summary",
+  "imgUrl": "imgUrl",
   "deletedAt": false,
   "createdAt": "2022-12-17T04:25:07.803Z",
   "updatedAt": "2022-12-17T04:25:07.803Z",
